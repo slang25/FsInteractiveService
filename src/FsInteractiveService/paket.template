@@ -24,4 +24,3 @@ description
     F# interactive API exposed via a lightweight HTTP server. The project makes the service available as a stand-alone process that can be started and called via HTTP requests. It follows the same style as FsAutoComplete.
 files
     ../../bin/FsInteractiveService ==> tools
-    !!../../bin/FsInteractiveService/App.config

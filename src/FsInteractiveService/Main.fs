@@ -172,7 +172,7 @@ let dropTrailingWhiteSpace code =
     |> String.concat "\n"
 
 /// Evaluate interaction and return exception/error/success, possibly with formatted HTML value
-let evaluateInteraction file line (code:string) session = 
+let evaluateInteraction (file:string) line (code:string) session = 
     let dir = Path.GetDirectoryName(file)
     let allcode = sprintf "#silentCd @\"%s\"\n# %d @\"%s\"\n%s" dir line file (dropTrailingWhiteSpace code)
     let res = session.Session.EvalInteractionNonThrowing(allcode)
@@ -400,8 +400,8 @@ let app =
 [<EntryPoint>]
 let main argv =
     let binding =
-        let create address port = HttpBinding.mkSimple HTTP (defaultArg address "127.0.0.1") (defaultArg port 8707)
-        let parsePort port = match Int32.TryParse port with | true, port -> Some port | _ -> None
+        let create address port = HttpBinding.createSimple HTTP (defaultArg address "127.0.0.1") (defaultArg port 8707)
+        let parsePort (port:string) = match Int32.TryParse port with | true, port -> Some port | _ -> None
 
         if argv.Length = 0 then
             create None None

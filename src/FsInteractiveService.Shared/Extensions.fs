@@ -142,7 +142,7 @@ module FSharpSymbolExt =
             else false
         member x.EnclosingEntitySafe =
             try
-                Some x.EnclosingEntity
+                x.DeclaringEntity
             with :? InvalidOperationException -> None
 
     type FSharpEntity with

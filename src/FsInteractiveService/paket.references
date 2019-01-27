@@ -2,3 +2,4 @@ group Build
 
 Newtonsoft.Json
 FSharp.Compiler.Service
+Suave

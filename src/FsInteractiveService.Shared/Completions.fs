@@ -5,6 +5,7 @@ open Microsoft.FSharp.Compiler.Interactive.Shell
 open System
 open System.IO
 open System.Text.RegularExpressions
+open Microsoft.FSharp.Compiler
 
 type CompletionData = {
     displayText: string
@@ -73,7 +74,7 @@ module Completion =
         | Enum _ -> "Enum"
         | Interface _ -> "Interface"
         | Module _ -> "Module"
-        | Namespace _ -> "Namespace"
+        //| Namespace _ -> "Namespace"
         | Record _ -> "Record"
         | Union _ -> "Union"
         | ValueType _ -> "ValueType"
@@ -157,9 +158,10 @@ module Completion =
 
     let getCompletions (fsiSession: FsiEvaluationSession, input:string, column: int) =
         async {
-            let parseResults, checkResults, _checkProjectResults = fsiSession.ParseAndCheckInteraction(input)
+            let! parseResults, checkResults, _checkProjectResults = fsiSession.ParseAndCheckInteraction(input)
             let longName,residue = Parsing.findLongIdentsAndResidue(column, input)
-            let! symbols = checkResults.GetDeclarationListSymbols(Some parseResults, 1, column, input, longName, residue, fun (_,_) -> false)
+            let partialName = QuickParse.GetPartialLongNameEx(input, column-1)
+            let! symbols = checkResults.GetDeclarationListSymbols(Some parseResults, 1, input, partialName)
             let results = symbols
                           |> List.choose symbolToCompletionData
 
@@ -190,7 +192,7 @@ module Completion =
 
     let getParameterHints (fsiSession: FsiEvaluationSession, input:string, column: int) =
         async {
-            let _parseResults, checkResults, _checkProjectResults = fsiSession.ParseAndCheckInteraction("();;")
+            let! _parseResults, checkResults, _checkProjectResults = fsiSession.ParseAndCheckInteraction("();;")
 
             let lineToCaret = input.[0..column-1]
             let column = lineToCaret |> Seq.tryFindIndexBack (fun c -> c <> '(' && c <> ' ')

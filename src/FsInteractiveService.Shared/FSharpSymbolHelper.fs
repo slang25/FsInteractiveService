@@ -605,7 +605,7 @@ module SymbolTooltips =
 
     let getAPCaseSignature displayContext (apc:FSharpActivePatternCase) =
       let findVal =
-          apc.Group.EnclosingEntity
+          apc.Group.DeclaringEntity
           |> Option.bind (fun ent -> ent.MembersFunctionsAndValues
                                     |> Seq.tryFind (fun func -> func.DisplayName.Contains apc.DisplayName)
                                     |> Option.map (getFuncSignature displayContext))
@@ -641,7 +641,7 @@ module SymbolTooltips =
       
         | ActivePatternCase ap ->
           let parent =
-              ap.Group.EnclosingEntity
+              ap.Group.DeclaringEntity
               |> Option.map (fun enclosing -> enclosing.UnAnnotate().DisplayName)
               |> Option.fill "None"
           sprintf "<small>From type:\t%s</small>%s<small>Assembly:\t%s</small>" parent Environment.NewLine ap.Assembly.SimpleName
